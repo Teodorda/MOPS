@@ -1,0 +1,41 @@
+require('dotenv').config()
+const express = require('express')
+const app = express()
+const cors = require('cors')
+const userUtils = require('./user_utils')
+const consts = require('./const')
+const axios = require('axios').default
+app.use(cors())
+app.use(express.json())
+
+let access_token = '';
+
+async function getManagementApiToken(){
+    await axios.post(consts.oauth_token_url, {
+        client_id: process.env.client_id,
+        client_secret: process.env.client_secret,
+        audience:  consts.oauth_api_v2,
+        grant_type: 'client_credentials'
+      })
+      .then(function (response) {
+        access_token = 'Bearer '+ response.data.access_token;
+      });
+}
+
+getManagementApiToken();
+
+app.post('/user', cors(), (req, res) => {
+    userUtils.postUser(req, res, access_token);
+})
+
+app.post('/register', cors(), (req, res) => {
+    userUtils.registerUser(req, res, access_token);
+});
+
+app.post('/login', cors(), (req, res) => {
+    userUtils.loginUser(req, res, access_token);
+});
+
+app.listen(3001, () => {
+    console.log("Started listening on 3001");
+})
