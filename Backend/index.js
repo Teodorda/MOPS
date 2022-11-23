@@ -3,12 +3,14 @@ const express = require('express')
 const app = express()
 const cors = require('cors')
 const userUtils = require('./user_utils')
+const productUtils = require('./product_utils')
 const consts = require('./const')
 const axios = require('axios').default
 app.use(cors())
 app.use(express.json())
 
 let access_token = '';
+
 
 async function getManagementApiToken(){
     await axios.post(consts.oauth_token_url, {
@@ -24,6 +26,8 @@ async function getManagementApiToken(){
 
 getManagementApiToken();
 
+
+
 app.post('/user', cors(), (req, res) => {
     userUtils.postUser(req, res, access_token);
 })
@@ -36,6 +40,20 @@ app.post('/login', cors(), (req, res) => {
     userUtils.loginUser(req, res, access_token);
 });
 
+app.post('/product', cors(), (req, res) => {
+    productUtils.postProduct(req, res)
+})
+
+app.put('/product', cors(), (req, res) => {
+    productUtils.putProduct(req, res)
+})
+
+app.delete('/product', cors(), (req, res) => {
+    productUtils.deleteProduct(req, res)
+})
+
 app.listen(3001, () => {
     console.log("Started listening on 3001");
 })
+
+
