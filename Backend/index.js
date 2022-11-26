@@ -11,7 +11,6 @@ app.use(express.json())
 
 let access_token = '';
 
-
 async function getManagementApiToken(){
     await axios.post(consts.oauth_token_url, {
         client_id: process.env.client_id,
@@ -26,11 +25,9 @@ async function getManagementApiToken(){
 
 getManagementApiToken();
 
-
-
 app.post('/user', cors(), (req, res) => {
     userUtils.postUser(req, res, access_token);
-})
+});
 
 app.post('/register', cors(), (req, res) => {
     userUtils.registerUser(req, res, access_token);
@@ -41,19 +38,21 @@ app.post('/login', cors(), (req, res) => {
 });
 
 app.post('/product', cors(), (req, res) => {
-    productUtils.postProduct(req, res)
-})
+    productUtils.postProduct(req, res);
+});
 
 app.put('/product', cors(), (req, res) => {
-    productUtils.putProduct(req, res)
-})
+    productUtils.putProduct(req, res);
+});
 
 app.delete('/product', cors(), (req, res) => {
-    productUtils.deleteProduct(req, res)
-})
+    productUtils.deleteProduct(req, res);
+});
+  
+app.get('/products', cors(), (req, res) => {
+    productUtils.getProducts(req, res);
+});
 
 app.listen(3001, () => {
     console.log("Started listening on 3001");
-})
-
-
+});
