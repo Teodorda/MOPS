@@ -71,4 +71,17 @@ const deleteProduct = (req, res) => {
     )
 }
 
-module.exports = {postProduct, putProduct, deleteProduct}
+const getProducts = (req, res) => {
+    con.query(
+        "SELECT * FROM products",
+        function (err, result) {
+            if (err) {
+                res.json({ products: 'error' })
+            }
+
+            res.json({ products: result})
+            
+    })
+}
+
+module.exports = {postProduct, putProduct, deleteProduct, getProducts}

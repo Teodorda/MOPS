@@ -7,4 +7,4 @@ const con = mysql.createConnection({
     database: "charity_platform"
 });
 
-module.exports = {con}
+module.exports = {con};

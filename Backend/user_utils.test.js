@@ -8,8 +8,8 @@ jest.mock('axios', () => {
                 data: "mock_data"
             })
         }
-    })
-})
+    });
+});
 
 const axios = require('axios').default
 
@@ -23,7 +23,7 @@ const mockRes = {
     json: jest.fn()
 }
 
-const mockAccessToken = 'ACCESS_TOKEN'
+const mockAccessToken = 'ACCESS_TOKEN';
 
 describe("post user", () => {
     test("posts user", async () => {
