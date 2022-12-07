@@ -24,7 +24,7 @@ const postHistoryDonator = (req, res) => {
         }
     )
 
-    con.query("DELETE FROM products WHERE id="+id_product,
+    con.query("DELETE FROM products WHERE id=" + id_product,
         function (err) {
             if (err) {
                 console.log(err)
@@ -35,6 +35,21 @@ const postHistoryDonator = (req, res) => {
 }
 
 
+const getHistoryDonator = (req, res) => {
+
+    const user_id = req.body.user_id
+
+    con.query(
+        "SELECT * FROM history_donator WHERE user_id='" + user_id + "'",
+        function (err, result, fields) {
+            if (err) {
+                res.json({ products: 'error' })
+            }
+
+            res.json({ history: result })
+
+        })
+}
 
 const postHistoryBeneficiary = (req, res) => {
     const id_cerere = req.body.id_cerere
@@ -60,7 +75,7 @@ const postHistoryBeneficiary = (req, res) => {
         }
     )
 
-    con.query("DELETE FROM cereri WHERE id="+id_cerere,
+    con.query("DELETE FROM cereri WHERE id=" + id_cerere,
         function (err) {
             if (err) {
                 console.log(err)
@@ -70,8 +85,26 @@ const postHistoryBeneficiary = (req, res) => {
     )
 }
 
+ const getHistoryBeneficiary = (req, res) => {
+
+    const user_id = req.body.user_id
+
+    con.query(
+        "SELECT * FROM history_beneficiar WHERE user_id='" + user_id + "'",
+        function (err, result, fields) {
+            if (err) {
+                res.json({ products: 'error' })
+            }
+
+            res.json({ history: result })
+
+        })
+}
+
 module.exports = {
     postHistoryDonator,
-    postHistoryBeneficiary
+    getHistoryDonator,
+    postHistoryBeneficiary,
+    getHistoryBeneficiary,
 }
 
