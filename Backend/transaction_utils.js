@@ -1,0 +1,77 @@
+const con = require("./db_con").con
+
+const postHistoryDonator = (req, res) => {
+    const id_product = req.body.id_product
+    const name = req.body.name
+    const cantitate = req.body.cantitate
+    const donator = req.body.donator
+    const user_id = req.body.user_id
+
+    con.query(
+        "INSERT INTO history_donator (name, cantitate, donator, user_id) value ('" +
+        name +
+        "', '" +
+        cantitate +
+        "', '" +
+        donator +
+        "', '" +
+        user_id +
+        "')",
+        function (err) {
+            if (err) {
+                console.log(err)
+            }
+        }
+    )
+
+    con.query("DELETE FROM products WHERE id="+id_product,
+        function (err) {
+            if (err) {
+                console.log(err)
+            }
+            res.json({ transfer: 'true' })
+        }
+    )
+}
+
+
+
+const postHistoryBeneficiary = (req, res) => {
+    const id_cerere = req.body.id_cerere
+    const name = req.body.name
+    const cantitate = req.body.cantitate
+    const beneficiar = req.body.beneficiar
+    const user_id = req.body.user_id
+
+    con.query(
+        "INSERT INTO history_beneficiar (name, cantitate, beneficiar, user_id) value ('" +
+        name +
+        "', '" +
+        cantitate +
+        "', '" +
+        beneficiar +
+        "', '" +
+        user_id +
+        "')",
+        function (err) {
+            if (err) {
+                console.log(err)
+            }
+        }
+    )
+
+    con.query("DELETE FROM cereri WHERE id="+id_cerere,
+        function (err) {
+            if (err) {
+                console.log(err)
+            }
+            res.json({ transfer: 'true' })
+        }
+    )
+}
+
+module.exports = {
+    postHistoryDonator,
+    postHistoryBeneficiary
+}
+

@@ -5,6 +5,7 @@ const cors = require('cors')
 const userUtils = require('./user_utils')
 const productUtils = require('./product_utils')
 const consts = require('./const')
+const transactionUtils = require('./transaction_utils')
 const axios = require('axios').default
 app.use(cors())
 app.use(express.json())
@@ -51,6 +52,14 @@ app.delete('/product', cors(), (req, res) => {
   
 app.get('/products', cors(), (req, res) => {
     productUtils.getProducts(req, res);
+});
+
+app.post('/historydonator', cors(), (req, res) => {
+    transactionUtils.postHistoryDonator(req, res);
+});
+
+app.post('/historybeneficiary', cors(), (req, res) => {
+    transactionUtils.postHistoryBeneficiary(req, res);
 });
 
 app.listen(3001, () => {
