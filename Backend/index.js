@@ -55,6 +55,22 @@ app.get("/historybeneficiary", cors(), (req, res) => {
   transactionUtils.getHistoryBeneficiary(req, res);
 });
 
+app.get('/getrequest', cors(), (req, res) => {
+    transactionUtils.getRequest(req, res);
+});
+
+app.post('/deleterequest', cors(), (req, res) => {
+    transactionUtils.deleteRequest(req, res);
+});
+
+app.post('/addrequest', cors(), (req, res) => {
+    transactionUtils.addRequest(req, res);
+});
+
+app.post('/modifyrequest', cors(), (req, res) => {
+    transactionUtils.modifyRequest(req, res);
+});
+
 app.listen(3001, () => {
   console.log("Started listening on 3001");
 });
