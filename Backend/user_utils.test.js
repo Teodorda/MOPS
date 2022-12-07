@@ -1,42 +1,30 @@
-const postUser = require('./user_utils').postUser
-const consts = require('./const')
+const getUser = require("./user_utils").getUser;
 
-jest.mock('axios', () => {
-    return({
-        default:  {
-            request: jest.fn().mockResolvedValue({
-                data: "mock_data"
-            })
-        }
-    });
+jest.mock("./auth_utils", () => {
+  return {
+    getUserData: jest.fn().mockResolvedValue("mock_data"),
+  };
 });
 
-const axios = require('axios').default
+const auth_utils = require("./auth_utils");
 
 const mockReq = {
-    body: {
-        user_id: "123456"
-    }
-}
+  body: {
+    user_id: "123456",
+  },
+};
 
 const mockRes = {
-    json: jest.fn()
-}
+  json: jest.fn(),
+};
 
-const mockAccessToken = 'ACCESS_TOKEN';
-
-describe("post user", () => {
-    test("posts user", async () => {
-        const expectedOptions = {
-            method: 'GET',
-            url: `${consts.oauth_api_v2}users/`+mockReq.body.user_id,
-            headers: {authorization: mockAccessToken}
-        }
-        postUser(mockReq, mockRes, mockAccessToken);
-        await(new Promise(resolve => resolve()));
-        expect (axios.request).toHaveBeenCalledWith(expectedOptions);
-        expect (mockRes.json).toHaveBeenCalledWith({
-            user: "mock_data"
-        });
-    })
-})
+describe("get user", () => {
+  test("gets user", async () => {
+    getUser(mockReq, mockRes);
+    await new Promise((resolve) => resolve());
+    expect(auth_utils.getUserData).toHaveBeenCalledWith(mockReq.body.user_id);
+    expect(mockRes.json).toHaveBeenCalledWith({
+      user: "mock_data",
+    });
+  });
+});
