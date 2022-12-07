@@ -58,8 +58,16 @@ app.post('/historydonator', cors(), (req, res) => {
     transactionUtils.postHistoryDonator(req, res);
 });
 
+app.get('/historydonator', cors(), (req, res) => {
+    transactionUtils.getHistoryDonator(req, res);
+});
+
 app.post('/historybeneficiary', cors(), (req, res) => {
     transactionUtils.postHistoryBeneficiary(req, res);
+});
+
+app.get('/historybeneficiary', cors(), (req, res) => {
+    transactionUtils.getHistoryBeneficiary(req, res);
 });
 
 app.listen(3001, () => {
