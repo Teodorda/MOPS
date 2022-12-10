@@ -4,6 +4,7 @@ const app = express();
 const cors = require("cors");
 const userUtils = require("./user_utils");
 const productUtils = require("./product_utils");
+const requestUtils = require("./request_utils");
 const transactionUtils = require("./transaction_utils");
 const auth_utils = require("./auth_utils");
 app.use(cors());
@@ -55,20 +56,20 @@ app.get("/historybeneficiary", cors(), (req, res) => {
   transactionUtils.getHistoryBeneficiary(req, res);
 });
 
-app.get('/getrequest', cors(), (req, res) => {
-    transactionUtils.getRequest(req, res);
+app.get("/requests", cors(), (req, res) => {
+  requestUtils.getRequests(req, res);
 });
 
-app.post('/deleterequest', cors(), (req, res) => {
-    transactionUtils.deleteRequest(req, res);
+app.post("/request", cors(), (req, res) => {
+  requestUtils.postRequest(req, res);
 });
 
-app.post('/addrequest', cors(), (req, res) => {
-    transactionUtils.addRequest(req, res);
+app.put("/request", cors(), async (req, res) => {
+  await requestUtils.putRequest(req, res);
 });
 
-app.post('/modifyrequest', cors(), (req, res) => {
-    transactionUtils.modifyRequest(req, res);
+app.delete("/request", cors(), async (req, res) => {
+  await requestUtils.deleteRequest(req, res);
 });
 
 app.listen(3001, () => {
