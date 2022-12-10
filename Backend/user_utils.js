@@ -48,6 +48,7 @@ const registerUser = (req, res) => {
       })
       .catch((error) => {
         console.log(error);
+        res.json({ register: "false" });
       });
   } else {
     res.json({ register: "false" });

@@ -1,4 +1,4 @@
-var jwt = require("jsonwebtoken");
+const jwt = require("jsonwebtoken");
 const axios = require("axios").default;
 
 const consts = require("./const");
@@ -59,7 +59,7 @@ const getUserData = (userId) => {
 };
 
 const isUserAdmin = async (userId) => {
-  const userData = await getUserData(userId);
+  const userData = await authUtils.getUserData(userId);
   return userData.user_metadata.admin === "true";
 };
 
@@ -73,12 +73,12 @@ const canUserEditEntity = async (userId, entityId, getEntityFn) => {
     return false;
   }
 
-  const isAdmin = await isUserAdmin(userId);
+  const isAdmin = await authUtils.isUserAdmin(userId);
 
   return isAdmin || entity.user_id === userId;
 };
 
-module.exports = {
+const authUtils = {
   getUserIdFromJwt,
   generateJwtWithUserId,
   getAccessToken,
@@ -87,3 +87,5 @@ module.exports = {
   isUserAdmin,
   canUserEditEntity,
 };
+
+module.exports = authUtils;
