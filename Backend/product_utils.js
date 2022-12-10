@@ -99,12 +99,16 @@ const deleteProduct = async (req, res) => {
 };
 
 const getProducts = (req, res) => {
-  con.query("SELECT * FROM products", function (err, result) {
+  con.query("SELECT * FROM products", async function (err, result) {
     if (err) {
       res.json({ products: "error" });
     }
-
-    res.json({ products: result });
+    const userIds = [...new Set(result.map(r => r.user_id))];
+    const users = await Promise.all(userIds.map(user_id => auth_utils.getUserData(user_id)));
+    const products = result.map(r => ({
+      ...r, user: users.find(u => u.user_id === r.user_id)
+    }))
+    res.json({products});
   });
 };
 
@@ -122,5 +126,6 @@ const getProductById = (productId) => {
     );
   });
 };
+
 
 module.exports = { postProduct, putProduct, deleteProduct, getProducts };
