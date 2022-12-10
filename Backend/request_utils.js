@@ -2,12 +2,16 @@ const con = require("./db_con").con;
 const auth_utils = require("./auth_utils");
 
 const getRequests = (req, res) => {
-  con.query("SELECT * FROM cereri", function (err, result, fields) {
+  con.query("SELECT * FROM cereri", async function (err, result, fields) {
     if (err) {
-      res.json({ products: "error" });
+      res.json({ requests: "error" });
     }
-
-    res.json({ products: result });
+    const userIds = [...new Set(result.map(r => r.user_id))];
+    const users = await Promise.all(userIds.map(user_id => auth_utils.getUserData(user_id)));
+    const requests = result.map(r => ({
+      ...r, user: users.find(u => u.user_id === r.user_id)
+    }))
+    res.json({ requests });
   });
 };
 
