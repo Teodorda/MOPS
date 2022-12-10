@@ -1,4 +1,5 @@
 const productUtils = require("./product_utils");
+const auth_utils = require("./auth_utils");
 
 const mockUserId = "mock-userId";
 jest.mock("./db_con.js", () => {
@@ -12,6 +13,7 @@ jest.mock("./db_con.js", () => {
 jest.mock("./auth_utils", () => ({
   getUserIdFromJwt: () => mockUserId,
   canUserEditEntity: jest.fn().mockResolvedValue(true),
+  getUserData: jest.fn(),
 }));
 
 const con = require("./db_con").con;
@@ -180,15 +182,6 @@ describe("productUtils", () => {
   describe("getProducts", () => {
     const expectedQuery = `SELECT * FROM products`;
 
-    test("it modifies a product", () => {
-      productUtils.getProducts(mockReq, mockRes);
-
-      expect(con.query).toHaveBeenCalledWith(
-        expectedQuery,
-        expect.any(Function)
-      );
-    });
-
     test('it calls res with products "error" if it errors', () => {
       const errorStatus = true;
       con.query.mockImplementationOnce((_, fn) => {
@@ -203,19 +196,46 @@ describe("productUtils", () => {
       expect(mockRes.json).toHaveBeenCalledWith({ products: "error" });
     });
 
-    test("it calls res with products if it is successful", () => {
+    test("it calls res with products if it is successful", async () => {
       const errorStatus = false;
-      const products = "mock-products";
+      const products = [
+        {
+          id: "mock-product-1",
+          user_id: "mock-user-1",
+        },
+        {
+          id: "mock-product-2",
+          user_id: "mock-user-1",
+        },
+        {
+          id: "mock-product-3",
+          user_id: "mock-user-2",
+        },
+      ];
+      const expectedProducts = products.map(p => ({
+        ...p,
+        user: {user_id: p.user_id}
+      }));
+
+      auth_utils.getUserData.mockImplementation((user_id) => {
+        return new Promise(resolve => {
+          resolve({user_id})
+        });
+      });
+
       con.query.mockImplementationOnce((_, fn) => {
         fn(errorStatus, products);
       });
       productUtils.getProducts(mockReq, mockRes);
+      await new Promise(resolve => {
+        setTimeout(() => resolve());
+      })
 
       expect(con.query).toHaveBeenCalledWith(
         expectedQuery,
         expect.any(Function)
       );
-      expect(mockRes.json).toHaveBeenCalledWith({ products });
+      expect(mockRes.json).toHaveBeenCalledWith({ products: expectedProducts });
     });
   });
 });

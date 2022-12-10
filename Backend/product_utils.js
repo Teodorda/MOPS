@@ -100,9 +100,11 @@ const deleteProduct = async (req, res) => {
 
 const getProducts = (req, res) => {
   con.query("SELECT * FROM products", async function (err, result) {
-    if (err) {
+    if (!result || err) {
       res.json({ products: "error" });
+      return;
     }
+
     const userIds = [...new Set(result.map(r => r.user_id))];
     const users = await Promise.all(userIds.map(user_id => auth_utils.getUserData(user_id)));
     const products = result.map(r => ({
