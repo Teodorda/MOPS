@@ -16,18 +16,18 @@ function App() {
     if (userJwt) {
       return (
         <>
-          <Route exact path="/" element={<Donations />} />
+          <Route exact path="/login" element={<Login />} />
           <Route path="/donations" element={<Donations />} />
           <Route path="/requests" element={<Requests />} />
           <Route path="/profile" element={<Profile />} />
-          <Route path="*" element={<Navigate to="/" />} />
+          <Route path="*" element={<Navigate to="/donations" />} />
         </>
       );
     }
 
     return (
       <>
-        <Route exact path="/" element={<Navigate to="/login" />} />
+        <Route exact path="/" element={<Login />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="*" element={<Navigate to="/login" />} />
