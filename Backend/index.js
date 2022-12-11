@@ -19,6 +19,10 @@ app.post("/user", cors(), (req, res) => {
 app.post("/currentUser", cors(), (req, res) => {
   const userJwt = req.body.userJwt;
   const user_id = auth_utils.getUserIdFromJwt(userJwt);
+  if (!user_id) {
+    res.json({user: null});
+    return;
+  }
   req.body.user_id = user_id;
   userUtils.getUser(req, res);
 });

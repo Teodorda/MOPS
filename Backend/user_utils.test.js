@@ -167,7 +167,7 @@ describe("user_utils", () => {
         consts.oauth_token_url,
         axiosPostLoginData
       );
-      expect(mockRes.json).toHaveBeenCalledWith({ userJwt: 'false' });
+      expect(mockRes.json).toHaveBeenCalledWith({ userJwt: null });
     });
 
     test("it returns userJwt 'false' if auth0 fails while trying to get user data", async () => {
@@ -181,7 +181,7 @@ describe("user_utils", () => {
         axiosPostLoginData
       );
       expect(axios.request).toHaveBeenCalled();
-      expect(mockRes.json).toHaveBeenCalledWith({ userJwt: 'false' });
+      expect(mockRes.json).toHaveBeenCalledWith({ userJwt: null });
     });
 
     test("it returns userJwt if auth0 is successful", async () => {
