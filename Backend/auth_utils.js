@@ -48,7 +48,7 @@ const getUserData = (userId) => {
     axios
       .request(options)
       .then(function (response) {
-        console.log(response.data);
+        // console.log(response.data);
         resolve(response.data);
       })
       .catch(function (error) {

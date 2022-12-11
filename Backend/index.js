@@ -12,7 +12,14 @@ app.use(express.json());
 
 auth_utils.getManagementApiToken();
 
-app.get("/user", cors(), (req, res) => {
+app.post("/user", cors(), (req, res) => {
+  userUtils.getUser(req, res);
+});
+
+app.post("/currentUser", cors(), (req, res) => {
+  const userJwt = req.body.userJwt;
+  const user_id = auth_utils.getUserIdFromJwt(userJwt);
+  req.body.user_id = user_id;
   userUtils.getUser(req, res);
 });
 
@@ -44,7 +51,7 @@ app.post("/historydonator", cors(), (req, res) => {
   transactionUtils.postHistoryDonator(req, res);
 });
 
-app.get("/historydonator", cors(), (req, res) => {
+app.post("/gethistorydonator", cors(), (req, res) => {
   transactionUtils.getHistoryDonator(req, res);
 });
 
@@ -52,7 +59,7 @@ app.post("/historybeneficiary", cors(), (req, res) => {
   transactionUtils.postHistoryBeneficiary(req, res);
 });
 
-app.get("/historybeneficiary", cors(), (req, res) => {
+app.post("/gethistorybeneficiary", cors(), (req, res) => {
   transactionUtils.getHistoryBeneficiary(req, res);
 });
 
