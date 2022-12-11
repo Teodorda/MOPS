@@ -87,12 +87,12 @@ const loginUser = (req, res) => {
         })
         .catch(function (error) {
           console.error(error);
-          res.json({ userJwt: "false" });
+          res.json({ userJwt: null });
         });
     })
     .catch((error) => {
       console.log(error);
-      res.json({ userJwt: "false" });
+      res.json({ userJwt: null });
     });
 };
 

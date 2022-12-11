@@ -18,12 +18,17 @@ export function AuthProvider({ children }) {
     axios
       .post(`${API_URL}/currentUser`, { userJwt: userJwt })
       .then(({ data: user }) => {
-        setCurrentUser(user.user);
+        if (user) {
+            setCurrentUser(user.user);
+        } else {
+            logout();
+        }
         setLoading(false);
       })
       .catch((err) => {
         console.log("ERR", err);
         setLoading(false);
+        logout();
       });
   };
 
