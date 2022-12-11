@@ -24,8 +24,7 @@ const Requests = () => {
 
   const navigate = useNavigate();
 
-  function addOffer(event) {
-    event.preventDefault();
+  const addRequest = (event) => {
     const product = {
       nume: requestName,
       cantitate: requestQty,
@@ -88,63 +87,62 @@ const Requests = () => {
                     Adauga o cerere
                   </p>
                 </div>
-                <div className="card-body">
-                  <div className="row">
-                    <div className="col">
-                      <label className="col-form-label">Nume</label>
+                <form onSubmit={addRequest}>
+                  <div className="card-body">
+                    <div className="row">
+                      <div className="col">
+                        <label className="col-form-label">Nume</label>
+                      </div>
+                      <div className="col">
+                        <input
+                          type="text"
+                          value={requestName}
+                          onChange={(e) => setRequestName(e.target.value)}
+                        />
+                      </div>
                     </div>
-                    <div className="col">
-                      <input
-                        type="text"
-                        value={requestName}
-                        onChange={(e) => setRequestName(e.target.value)}
-                      />
+                    <div className="row">
+                      <div className="col">
+                        <label className="col-form-label">Cantitate</label>
+                      </div>
+                      <div className="col">
+                        <input
+                          type="text"
+                          value={requestQty}
+                          onChange={(e) => setRequestQty(e.target.value)}
+                        />
+                      </div>
                     </div>
-                  </div>
-                  <div className="row">
-                    <div className="col">
-                      <label className="col-form-label">Cantitate</label>
+                    <div className="row">
+                      <div className="col">
+                        <label className="col-form-label">
+                          Adresa de preluare
+                        </label>
+                      </div>
+                      <div className="col">
+                        <input
+                          type="text"
+                          value={requestAddress}
+                          onChange={(e) => setRequestAddress(e.target.value)}
+                        />
+                      </div>
                     </div>
-                    <div className="col">
-                      <input
-                        type="text"
-                        value={requestQty}
-                        onChange={(e) => setRequestQty(e.target.value)}
-                      />
-                    </div>
-                  </div>
-                  <div className="row">
-                    <div className="col">
-                      <label className="col-form-label">
-                        Adresa de preluare
-                      </label>
-                    </div>
-                    <div className="col">
-                      <input
-                        type="text"
-                        value={requestAddress}
-                        onChange={(e) => setRequestAddress(e.target.value)}
-                      />
-                    </div>
-                  </div>
-                  <div className="row">
-                    <div
-                      className="col text-center"
-                      style={{ marginTop: "10px" }}
-                    >
-                      <div className="btn-group" role="group">
-                        <button
-                          className="btn btn-primary"
-                          type="button"
-                          onClick={addOffer}
-                        >
-                          Adauga
-                        </button>
+                    <div className="row">
+                      <div
+                        className="col text-center"
+                        style={{ marginTop: "10px" }}
+                      >
+                        <div className="btn-group" role="group">
+                          <button className="btn btn-primary" type="submit">
+                            Adauga
+                          </button>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
+                </form>
               </div>
+
               {!isAdmin() && (
                 <div className="card shadow">
                   <div className="card-header py-3">

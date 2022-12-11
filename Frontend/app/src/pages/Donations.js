@@ -24,7 +24,6 @@ const Donations = () => {
   const navigate = useNavigate();
 
   const addOffer = (event) => {
-    event.preventDefault();
     const product = {
       nume: offerName,
       cantitate: offerQty,
