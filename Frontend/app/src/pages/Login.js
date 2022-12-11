@@ -17,10 +17,6 @@ const Login = () => {
 
   const navigate = useNavigate();
 
-  useEffect(() => {
-    window.sessionStorage.removeItem("user_id");
-  }, []);
-
   const handleSubmit = (event) => {
     event.preventDefault();
 
