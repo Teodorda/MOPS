@@ -92,7 +92,7 @@ describe("user_utils", () => {
       user_utils.registerUser(_mockReq, mockRes);
 
       expect(axios.post).not.toHaveBeenCalled();
-      expect(mockRes.json).toHaveBeenCalledWith({ register: "false" });
+      expect(mockRes.json).toHaveBeenCalledWith({ register: false });
     });
 
     test("it returns register 'false' if axios request fails", async () => {
@@ -110,7 +110,7 @@ describe("user_utils", () => {
           },
         }
       );
-      expect(mockRes.json).toHaveBeenCalledWith({ register: "false" });
+      expect(mockRes.json).toHaveBeenCalledWith({ register: false });
     });
 
     test("it returns register 'true' if successful", async () => {
@@ -128,7 +128,7 @@ describe("user_utils", () => {
           },
         }
       );
-      expect(mockRes.json).toHaveBeenCalledWith({ register: "true" });
+      expect(mockRes.json).toHaveBeenCalledWith({ register: true });
     });
   });
 
@@ -167,7 +167,7 @@ describe("user_utils", () => {
         consts.oauth_token_url,
         axiosPostLoginData
       );
-      expect(mockRes.json).toHaveBeenCalledWith({ userJwt: "false" });
+      expect(mockRes.json).toHaveBeenCalledWith({ userJwt: 'false' });
     });
 
     test("it returns userJwt 'false' if auth0 fails while trying to get user data", async () => {
@@ -181,7 +181,7 @@ describe("user_utils", () => {
         axiosPostLoginData
       );
       expect(axios.request).toHaveBeenCalled();
-      expect(mockRes.json).toHaveBeenCalledWith({ userJwt: "false" });
+      expect(mockRes.json).toHaveBeenCalledWith({ userJwt: 'false' });
     });
 
     test("it returns userJwt if auth0 is successful", async () => {

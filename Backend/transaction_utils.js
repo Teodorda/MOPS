@@ -39,7 +39,7 @@ const getHistoryDonator = (req, res) => {
     "SELECT * FROM history_donator WHERE user_id='" + user_id + "'",
     function (err, result, fields) {
       if (err) {
-        res.json({ products: "error" });
+        res.json({ history: "error" });
       }
 
       res.json({ history: result });
@@ -86,7 +86,7 @@ const getHistoryBeneficiary = (req, res) => {
     "SELECT * FROM history_beneficiar WHERE user_id='" + user_id + "'",
     function (err, result, fields) {
       if (err) {
-        res.json({ products: "error" });
+        res.json({ history: "error" });
       }
 
       res.json({ history: result });

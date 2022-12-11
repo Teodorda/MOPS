@@ -44,14 +44,14 @@ const registerUser = (req, res) => {
         }
       )
       .then(function (response) {
-        res.json({ register: "true" });
+        res.json({ register: true });
       })
       .catch((error) => {
         console.log(error);
-        res.json({ register: "false" });
+        res.json({ register: false });
       });
   } else {
-    res.json({ register: "false" });
+    res.json({ register: false });
   }
 };
 
