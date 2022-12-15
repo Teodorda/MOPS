@@ -11,8 +11,6 @@ jest.mock("./db_con.js", () => {
 });
 
 jest.mock("./auth_utils", () => ({
-  getUserIdFromJwt: () => mockUserId,
-  canUserEditEntity: jest.fn().mockResolvedValue(true),
   getUserData: jest.fn(),
 }));
 
@@ -23,111 +21,116 @@ const mockRes = {
 };
 
 describe("productUtils", () => {
-  const mockReq = {};
+  const generate_user = (id) => {
+    return {
+      user_id: id,
+      username: 'mock_username-' + id,
+      email: 'mock_email-' + id,
+    }
+  }
+
+  const generate_product = (id, user_id) => {
+    return {
+      id: id,
+      nume: 'nume-produs-' + id,
+      cantitate: '10',
+      tip: 'tip-produs-' + id,
+      data_expirare: Date.now(),
+      adresa: 'adresa-' + id,
+      luna: 'luna',
+      an: 'an',
+      user_id: user_id
+    }
+  }
+
+  const generate_products = (users, count) => {
+    const arr = []
+
+    users.forEach((user) => {
+      for (let i = 0; i < count; ++i) {
+        arr.push(generate_product(i, user.user_id));
+      }
+    })
+
+    return arr;
+  }
+
+  const generate_users = (count) => {
+    const arr = []
+
+    for (let i = 0; i < count; ++i) {
+      arr.push(generate_user(i));
+    }
+
+    return arr;
+  }
 
   describe("getProducts", () => {
     const expectedQuery = `SELECT * FROM products`;
+    const userCount = 5;
+    const mockUsers = generate_users(userCount);
+    const mockProducts = generate_products(mockUsers, 5);
 
-    test('it calls res with products "error" if result is null', () => {
-      const result = null;
-      const output = "error";
+    beforeAll(() => {
+      jest.spyOn(console, 'log').mockImplementation(() => { });
+    })
 
-      expect(result).toBeFalsy()
+    afterEach(() => { jest.clearAllMocks() })
 
-      con.query.mockImplementationOnce((_, fn) => {
-        fn(result)
-      });
-      productUtils.getProducts(mockReq, mockRes);
+    afterAll(() => {
+      jest.resetAllMocks();
+    })
 
-      expect(con.query).toHaveBeenCalledWith(
-        expectedQuery,
-        expect.any(Function)
-      );
-      expect(mockRes.json).toHaveBeenCalledWith({ products: output });
-    });
+    test('it calls res with products that have userData if successful', async () => {
+      const expectedProducts = mockProducts.map((p) => ({ ...p, user: mockUsers.find((user) => user.user_id === p.user_id) }))
+      auth_utils.getUserData.mockImplementation((user_id) => new Promise((resolve) => resolve(mockUsers.find((user) => user.user_id === user_id))));
 
-    test('it calls res with products "error" if result is undefined', () => {
-      const result = undefined;
-      const output = "error";
-
-      expect(result).toBeFalsy()
-
-      con.query.mockImplementationOnce((_, fn) => {
-        fn(result)
-      });
-      productUtils.getProducts(mockReq, mockRes);
-
-      expect(con.query).toHaveBeenCalledWith(
-        expectedQuery,
-        expect.any(Function)
-      );
-      expect(mockRes.json).toHaveBeenCalledWith({ products: output });
-    });
-
-    test('it calls res with products "error" if it errors', () => {
-      const errorStatus = true;
-      const output = "error";
-
-      con.query.mockImplementationOnce((_, fn) => {
-        fn(errorStatus);
-      });
-      productUtils.getProducts(mockReq, mockRes);
-
-      expect(con.query).toHaveBeenCalledWith(
-        expectedQuery,
-        expect.any(Function)
-      );
-      expect(mockRes.json).toHaveBeenCalledWith({ products: output });
-    });
-
-    test("it calls res with products if it is successful", async () => {
-      const errorStatus = false;
-      let data = {};
-
-      const products = [
-        {
-          id: "mock-product-1",
-          user_id: "mock-user-1",
-        },
-        {
-          id: "mock-product-2",
-          user_id: "mock-user-1",
-        },
-        {
-          id: "mock-product-3",
-          user_id: "mock-user-2",
-        },
-      ];
-
-      const expectedProducts = products.map(p => ({
-        ...p,
-        user: { user_id: p.user_id }
-      }));
-
-      auth_utils.getUserData.mockImplementation((user_id) => {
-        data = new Promise(resolve => {
-          resolve({ user_id })
-        });
-        return data;
+      con.query.mockImplementation((query, cb) => {
+        cb(null, mockProducts);
       });
 
-      expect(data).toMatchObject({});
+      productUtils.getProducts(mockRes);
+      await new Promise(resolve => setTimeout(resolve, 500))
 
-      con.query.mockImplementationOnce((_, fn) => {
-        fn(errorStatus, products);
-      });
-
-      productUtils.getProducts(mockReq, mockRes);
-      await new Promise(resolve => {
-        setTimeout(() => resolve());
-      });
-
-      expect(con.query).toHaveBeenCalledWith(
-        expectedQuery,
-        expect.any(Function)
-      );
-
+      expect(con.query).toHaveBeenCalledWith(expectedQuery, expect.any(Function));
+      expect(auth_utils.getUserData).toHaveBeenCalledTimes(userCount);
+      expect(console.log).not.toHaveBeenCalled();
+      expect(mockRes.json).toHaveBeenCalledTimes(1);
       expect(mockRes.json).toHaveBeenCalledWith({ products: expectedProducts });
+    });
+
+    test('it calls res with products error if not successful', async () => {
+      const err = new Error();
+      con.query.mockImplementation((query, cb) => {
+        cb(err, []);
+      });
+
+      productUtils.getProducts(mockRes);
+      await new Promise(resolve => setTimeout(resolve, 500))
+
+      expect(con.query).toHaveBeenCalledWith(expectedQuery, expect.any(Function));
+      expect(auth_utils.getUserData).not.toHaveBeenCalled();
+      expect(console.log).toHaveBeenCalledWith(err);
+      expect(mockRes.json).toHaveBeenCalledTimes(1);
+      expect(mockRes.json).toHaveBeenCalledWith({ products: 'error' });
+    });
+
+    test('it calls res with products error if userData failed to be fetched', async () => {
+      const err = new Error();
+      auth_utils.getUserData.mockImplementation(() => new Promise((resolve, reject) => reject(err)));
+
+      con.query.mockImplementation((query, cb) => {
+        cb(null, mockProducts);
+      });
+
+      productUtils.getProducts(mockRes)
+      await new Promise(resolve => setTimeout(resolve, 500))
+
+      expect(con.query).toHaveBeenCalledWith(expectedQuery, expect.any(Function));
+      expect(auth_utils.getUserData).toHaveBeenCalled();
+      expect(console.log).toHaveBeenCalledWith(err);
+      expect(mockRes.json).toHaveBeenCalledTimes(1);
+      expect(mockRes.json).toHaveBeenCalledWith({ products: 'error' });
     });
   });
 });

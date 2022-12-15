@@ -1,20 +1,22 @@
 const con = require("./db_con").con;
 const auth_utils = require("./auth_utils");
 
-const getProducts = (req, res) => {
-  con.query("SELECT * FROM products", async function (err, result) {
-    if (!result || err) {
-      res.json({ products: "error" });
-      return;
-    }
+const getProducts = (res) => {
+  con.query('SELECT * FROM products', async (err, products) => {
+    try {
+      if (err) {
+        throw err;
+      }
 
-    const userIds = [...new Set(result.map(r => r.user_id))];
-    const users = await Promise.all(userIds.map(user_id => auth_utils.getUserData(user_id)));
-    const products = result.map(r => ({
-      ...r, user: users.find(u => u.user_id === r.user_id)
-    }))
-    res.json({products});
-  });
+      const users = [...new Set(products.map((p) => p.user_id))]
+      const usersData = await Promise.all(users.map((u) => auth_utils.getUserData(u)))
+      const newProducts = products.map((p) => ({ ...p, user: usersData.find((user) => user.user_id === p.user_id) }))
+      res.json({ products: newProducts });
+    } catch (e) {
+      console.log(e);
+      res.json({ products: 'error' });
+    }
+  })
 };
 
 module.exports = { getProducts };
