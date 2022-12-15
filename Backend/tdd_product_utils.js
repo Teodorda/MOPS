@@ -19,4 +19,22 @@ const getProducts = (res) => {
   })
 };
 
-module.exports = { getProducts };
+const getRequests = (res) => {
+  con.query('SELECT * FROM cereri', async (err, requests) => {
+    try {
+      if (err) {
+        throw err;
+      }
+
+      const users = [...new Set(requests.map((r) => r.user_id))]
+      const usersData = await Promise.all(users.map((u) => auth_utils.getUserData(u)))
+      const newRequests = requests.map((r) => ({ ...r, user: usersData.find((user) => user.user_id === r.user_id) }))
+      res.json({ requests: newRequests });
+    } catch (e) {
+      console.log(e);
+      res.json({ requests: 'error' });
+    }
+  })
+};
+
+module.exports = { getProducts, getRequests };
