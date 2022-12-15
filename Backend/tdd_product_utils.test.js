@@ -1,7 +1,6 @@
 const productUtils = require("./tdd_product_utils");
 const auth_utils = require("./auth_utils");
 
-const mockUserId = "mock-userId";
 jest.mock("./db_con.js", () => {
   return {
     con: {
